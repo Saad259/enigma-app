@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import './App.css'
 
 let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 let rotor1 = shuffle([...alphabet]); // Randomized mappings for rotor1
@@ -90,7 +91,7 @@ function App() {
 
   // Display rotor configuration
   function printRotor(rotor) {
-    return rotor.map((char, index) => (
+    return rotor.slice(0, 3).map((char, index) => (
       <span key={index} style={{ marginRight: "5px" }}>
         {char}
       </span>
@@ -115,6 +116,14 @@ function App() {
       </div>
       <div style={{ marginTop: "30px", fontSize: "1.5rem", color: "blue" }}>
         {output}
+      </div>
+
+      <div className="keyboard">
+        {alphabet.map((char) => (
+          <div className="keybutton" key={char} style={{ margin: "5px", border: "1px solid black", padding: "10px" }}>
+            {char}
+          </div>
+        ))}
       </div>
     </div>
   );
