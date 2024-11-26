@@ -44,6 +44,7 @@ function App() {
   const [rotor2State, setRotor2State] = useState(rotor2);
   const [rotor3State, setRotor3State] = useState(rotor3);
   const [output, setOutput] = useState("");
+  const [textOutput, setTextOutput] = useState("");
 
   const reflector = createReflector(); // Initialize reflector
 
@@ -66,6 +67,8 @@ function App() {
         const reverse1 = alphabet[rotor1State.indexOf(reverse2)];
 
         setOutput(`Input: ${key} -> Output: ${reverse1}`);
+
+        setTextOutput((prev) => prev + reverse1);
 
         // Rotate rotors
         setRotor1State((prev) => rotateRotor(prev));
@@ -106,23 +109,33 @@ function App() {
 
   return (
     <div className="App" style={{ textAlign: "center", marginTop: "20px" }}>
-      <h1>Enigma-like Machine</h1>
-      <p>Press any key to see the mapped output.</p>
-      <div style={{ margin: "20px 0" }}>
+      <h1>Enigma Machine</h1>
+      <p>Type to create an encrypted message</p>
+      <div className="rotor" style={{ margin: "20px 0" }}>
         <h3>Rotor 1</h3>
         {printRotor(rotor1State)}
       </div>
-      <div style={{ margin: "20px 0" }}>
+      <div className="rotor" style={{ margin: "20px 0" }}>
         <h3>Rotor 2</h3>
         {printRotor(rotor2State)}
       </div>
-      <div style={{ margin: "20px 0" }}>
+      <div className="rotor"style={{ margin: "20px 0" }}>
         <h3>Rotor 3</h3>
         {printRotor(rotor3State)}
       </div>
       <div style={{ marginTop: "30px", fontSize: "1.5rem", color: "blue" }}>
         {output}
       </div>
+
+      <div>
+        <h3>Encrypted message</h3>
+        <div className="text-output" style={{ marginTop: "20px", fontSize: "1.2rem", color: "green" }}>
+          <span>
+            <p>{textOutput}</p>
+          </span>
+        </div>
+      </div>
+      
 
       <div className="keyboard">
         {alphabet.map((char) => (

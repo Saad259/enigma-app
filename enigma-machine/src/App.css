@@ -38,3 +38,18 @@
 .keybutton.active {
     background-color: #ffd700;
 }
+
+.text-output {
+    box-sizing: border-box;
+    max-width: 90%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow-x: hidden;
+    white-space: pre-wrap;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 10px auto;
+    text-align: left;
+}
