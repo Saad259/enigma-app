@@ -77,6 +77,12 @@ function App() {
             setRotor3State((prev) => rotateRotor(prev));
           }
         }
+
+        const outputKeyButton = document.querySelector(`.keybutton[data-key="${reverse1}"]`);
+        if(outputKeyButton){
+          outputKeyButton.classList.add("active");
+          setTimeout(() => outputKeyButton.classList.remove("active"), 500);
+        }
       }
     };
 
@@ -120,7 +126,11 @@ function App() {
 
       <div className="keyboard">
         {alphabet.map((char) => (
-          <div className="keybutton" key={char} style={{ margin: "5px", border: "1px solid black", padding: "10px" }}>
+          <div className="keybutton" 
+          key={char} 
+          data-key={char}
+          style={{ margin: "5px", border: "1px solid black", padding: "10px" }}
+          >
             {char}
           </div>
         ))}
