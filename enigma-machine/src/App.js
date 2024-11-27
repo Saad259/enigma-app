@@ -8,6 +8,8 @@ let rotor3 = shuffle([...alphabet]); // Randomized mappings for rotor3
 let rotation1 = 0;
 let rotation2 = 0;
 
+const COLORS = ["#FF5733", "#33FF57", "#3357FF", "#F3FF33", "#FF33F6", "#33FFF6", "#FFC133", "#B633FF", "#33FFB6", "#FF5733"];
+
 // Shuffle function to randomize rotor mappings
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -45,30 +47,86 @@ function App() {
   const [rotor3State, setRotor3State] = useState(rotor3);
   const [output, setOutput] = useState("");
   const [textOutput, setTextOutput] = useState("");
+  const [selectedPin, setSelectedPin] = useState(null);
+  const [pinMappings, setPinMappings] = useState({});
+  const [mappingColours, setMappingColours] = useState({});
 
   const reflector = createReflector(); // Initialize reflector
+
+  const handlePinClick = (char) => {
+
+    if(Object.keys(pinMappings).length / 2 >= 10 && !pinMappings[char])
+    {
+      alert("Only 10 combinations allowed!");
+      return;
+    }
+
+    if (selectedPin === char) {
+      // Deselect current pin
+      setSelectedPin(null);
+    } else if (selectedPin) {
+      // Create or remove mapping
+      const updatedMappings = { ...pinMappings };
+      const updatedColours = { ...mappingColours};
+
+      if (pinMappings[selectedPin] === char) {
+        // Remove existing mapping
+        delete updatedMappings[selectedPin];
+        delete updatedMappings[char];
+        delete updatedColours[selectedPin];
+        delete updatedColours[char];
+      } 
+      else {
+        // Create a new mapping
+
+        const colour = COLORS[Object.keys(updatedColours).length / 2];
+
+        updatedMappings[selectedPin] = char;
+        updatedMappings[char] = selectedPin;
+        updatedColours[selectedPin] = colour;
+        updatedColours[char] = colour;
+      }
+
+      setPinMappings(updatedMappings);
+      setMappingColours(updatedColours);
+      setSelectedPin(null);
+    } else {
+      // Select a new pin
+      setSelectedPin(char);
+    }
+  };
+
+  const encryptCharacter = (key) => {
+    // Check direct mapping
+    const directMapped = pinMappings[key] || key;
+
+    // Step through rotors
+    const step1 = rotor1State[alphabet.indexOf(directMapped)];
+    const step2 = rotor2State[alphabet.indexOf(step1)];
+    const step3 = rotor3State[alphabet.indexOf(step2)];
+
+    // Reflector step
+    const reflected = reflector[step3] || step3;
+
+    // Back through rotors
+    const reverse3 = alphabet[rotor3State.indexOf(reflected)];
+    const reverse2 = alphabet[rotor2State.indexOf(reverse3)];
+    const reverse1 = alphabet[rotor1State.indexOf(reverse2)];
+
+    return reverse1;
+  };
 
   // Handle key press for input
   useEffect(() => {
     const handleKeyPress = (event) => {
       const key = event.key.toUpperCase();
       if (alphabet.includes(key)) {
-        // Step through rotors
-        const step1 = rotor1State[alphabet.indexOf(key)];
-        const step2 = rotor2State[alphabet.indexOf(step1)];
-        const step3 = rotor3State[alphabet.indexOf(step2)];
+        
+        const encrypted = encryptCharacter(key);
 
-        // Reflector step
-        const reflected = reflector[step3] || step3;
+        setOutput(`Input: ${key} -> Output: ${encrypted}`);
 
-        // Back through rotors
-        const reverse3 = alphabet[rotor3State.indexOf(reflected)];
-        const reverse2 = alphabet[rotor2State.indexOf(reverse3)];
-        const reverse1 = alphabet[rotor1State.indexOf(reverse2)];
-
-        setOutput(`Input: ${key} -> Output: ${reverse1}`);
-
-        setTextOutput((prev) => prev + reverse1);
+        setTextOutput((prev) => prev + encrypted);
 
         // Rotate rotors
         setRotor1State((prev) => rotateRotor(prev));
@@ -81,7 +139,7 @@ function App() {
           }
         }
 
-        const outputKeyButton = document.querySelector(`.keybutton[data-key="${reverse1}"]`);
+        const outputKeyButton = document.querySelector(`.keybutton[data-key="${encrypted}"]`);
         if(outputKeyButton){
           outputKeyButton.classList.add("active");
           setTimeout(() => outputKeyButton.classList.remove("active"), 500);
@@ -148,6 +206,26 @@ function App() {
           </div>
         ))}
       </div>
+
+      <div>
+        <h3>Click two pins to create direct mappings</h3>
+        <h3>Click them each again to remove direct mappings</h3>
+        <div className="direct-pins">
+          {alphabet.map((char) => (
+            <button 
+            key={char}
+            className={`pin ${selectedPin === char ? "active" : ""} ${
+              pinMappings[char] ? "mapped" : ""
+            }`}
+            style={{backgroundColor: pinMappings[char] ? mappingColours[char] : "#f0f0f0"}}
+            onClick={() => handlePinClick(char)}
+            >
+              {char}
+            </button>
+          ))}
+        </div>
+      </div>
+      
     </div>
   );
 }

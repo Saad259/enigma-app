@@ -13,7 +13,7 @@
     background-color: #f0f0f0;
 }*/
 
-.keyboard {
+.keyboard, .direct-pins {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -21,7 +21,7 @@
     padding: 2em;
 }
 
-.keybutton {
+.keybutton, .pin {
     flex: 0 1 calc(9% - 1em); /* 6 items per row, minus gap */
     text-align: center;
     padding: 10px;
@@ -33,6 +33,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.pin {
+    cursor: pointer;
+}
+
+.pin.active {
+    background-color: #ffcccb;
 }
 
 .keybutton.active {
